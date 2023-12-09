@@ -1,0 +1,75 @@
+class Book {
+private:
+    std::string title;
+    std::string author;
+    std::string ISBN;
+    bool isAvailable;
+
+public:
+    Book(std::string t, std::string a, std::string isbn) : title(t), author(a), ISBN(isbn), isAvailable(true) {}
+
+    bool borrow() {
+        if (isAvailable) {
+            isAvailable = false;
+            return true;
+        }
+        return false;
+    }
+
+    void returnBook() {
+        isAvailable = true;
+    }
+
+    bool checkAvailability() const {
+        return isAvailable;
+    }
+
+    std::string getISBN() const {
+        return ISBN;
+    }
+
+    void info() const {
+        std::cout << title << " by " << author << ", ISBN: " << ISBN << "\n";
+    }
+};
+
+class Library {
+private:
+    std::vector<Book> books;
+
+public:
+    bool addBook(const Book &book) {
+        for (const auto &existingBook : books) {
+            if (existingBook.getISBN() == book.getISBN()) {
+                return false;
+            }
+        }
+        books.push_back(book);
+        return true;
+    }
+
+    bool borrow(const std::string &isbn) {
+        for (auto &book : books) {
+            if (book.getISBN() == isbn) {
+                if (book.borrow()) {
+                    return true;
+                }
+                return false;
+            }
+        }
+        return false;
+    }
+
+    void listAvailableBooks() {
+        bool found = false;
+        for (const auto &book : books) {
+            if (book.checkAvailability()) {
+                book.info();
+                found = true;
+            }
+        }
+        if (!found) {
+            std::cout << "No books available.\n";
+        }
+    }
+};
